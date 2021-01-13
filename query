@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -eu
+
+formatted_date () {
+    date --iso-8601=s --utc --date="$1" | sed 's/+00:00/Z/'
+}
+
+project="$1"
+resource_id="$2"
+
+if [ -z "$project" ] || [ -z "$resource_id" ]
+then
+    echo "Usage: query PROJECT RESOURCE_ID"
+    echo "e.g. query boclips-prod login.boclips.com"
+    exit 1
+fi
+
+token="$(gcloud auth application-default print-access-token)"
+start_time="$(formatted_date "1 minute ago")"
+end_time="$(formatted_date "now")"
+filter='metric.type="monitoring.googleapis.com/uptime_check/request_latency"+AND+'
+filter+='metric.label.checked_resource_id="'$resource_id'"'
+group_by_fields='aggregation.groupByFields=metric.label.\"check_id\"'
+per_series_aligner='aggregation.perSeriesAligner=ALIGN_MEAN'
+alignment_period='aggregation.alignmentPeriod=60s'
+cross_series_reducer='aggregation.crossSeriesReducer=REDUCE_SUM'
+query="interval.startTime=$start_time"
+query+="&interval.endTime=$end_time"
+query+="&filter=$filter"
+query+="&$group_by_fields"
+query+="&$per_series_aligner"
+query+="&$alignment_period"
+query+="&$cross_series_reducer"
+
+curl \
+    --header "Authorization: Bearer $token" \
+    "https://monitoring.googleapis.com/v3/projects/$project/timeSeries?$query"
