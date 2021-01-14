@@ -4,9 +4,9 @@ set -eu
 
 cwd="$(cd "$(dirname "$0")" && pwd)"
 
-metric_google="$("$cwd/query" "$GOOGLE_PROJECT_ID" "$RESOURCE_ID")"
+metric_google="$("$cwd/query" "$GOOGLE_PROJECT_ID" "$CHECK_ID")"
 timestamp_google="$(jq --raw-output .timeSeries[0].points[0].interval.endTime <<< "$metric_google")"
-timestamp_statuspage="$(date --date=$timestamp_google +%s)"
+timestamp_statuspage="$(date --date="$timestamp_google" +%s)"
 value="$(jq --raw-output .timeSeries[0].points[0].value.doubleValue <<< "$metric_google")"
 
 export STATUSPAGE_API_KEY

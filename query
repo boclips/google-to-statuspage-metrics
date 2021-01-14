@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-set -eu
+set -e
 
 formatted_date () {
     date --iso-8601=s --utc --date="$1" | sed 's/+00:00/Z/'
 }
 
 project="$1"
-resource_id="$2"
+check_id="$2"
 
-if [ -z "$project" ] || [ -z "$resource_id" ]
+if [ -z "$project" ] || [ -z "$check_id" ]
 then
-    echo "Usage: query PROJECT RESOURCE_ID"
-    echo "e.g. query boclips-prod login.boclips.com"
+    echo "Usage: query PROJECT CHECK_ID"
+    echo "e.g. query boclips-prod keycloak-sTJcJSO5NkM"
     exit 1
 fi
 
@@ -20,7 +20,7 @@ token="$(gcloud auth application-default print-access-token)"
 start_time="$(formatted_date "1 minute ago")"
 end_time="$(formatted_date "now")"
 filter='metric.type="monitoring.googleapis.com/uptime_check/request_latency"+AND+'
-filter+='metric.label.checked_resource_id="'$resource_id'"'
+filter+='metric.label.check_id="'$check_id'"'
 group_by_fields='aggregation.groupByFields=metric.label.\"check_id\"'
 per_series_aligner='aggregation.perSeriesAligner=ALIGN_MEAN'
 alignment_period='aggregation.alignmentPeriod=60s'
