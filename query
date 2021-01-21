@@ -24,7 +24,7 @@ filter+='metric.label.check_id="'$check_id'"'
 group_by_fields='aggregation.groupByFields=metric.label.\"check_id\"'
 per_series_aligner='aggregation.perSeriesAligner=ALIGN_MEAN'
 alignment_period='aggregation.alignmentPeriod=60s'
-cross_series_reducer='aggregation.crossSeriesReducer=REDUCE_SUM'
+cross_series_reducer='aggregation.crossSeriesReducer=REDUCE_MEAN'
 query="interval.startTime=$start_time"
 query+="&interval.endTime=$end_time"
 query+="&filter=$filter"
