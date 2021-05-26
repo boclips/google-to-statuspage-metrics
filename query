@@ -17,8 +17,13 @@ then
 fi
 
 token="$(gcloud auth application-default print-access-token)"
+
+echo "Formatting start time"
 start_time="$(formatted_date "1 minute ago")"
+
+echo "Formatting current time"
 end_time="$(formatted_date "now")"
+
 filter='metric.type="monitoring.googleapis.com/uptime_check/request_latency"+AND+'
 filter+='metric.label.check_id="'$check_id'"'
 group_by_fields='aggregation.groupByFields=metric.label.\"check_id\"'
