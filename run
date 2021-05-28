@@ -12,7 +12,9 @@ timestamp_google="$(jq --raw-output .timeSeries[0].points[0].interval.endTime <<
 echo "Formatting timestamp for statuspage"
 timestamp_statuspage="$(date --date="$timestamp_google" +%s)"
 
+echo "Getting value"
 value="$(jq --raw-output .timeSeries[0].points[0].value.doubleValue <<< "$metric_google")"
 
+echo "Setting on Statuspage"
 export STATUSPAGE_API_KEY
 "$cwd/set" "$PAGE_ID" "$METRIC_ID" "$timestamp_statuspage" "$value"
