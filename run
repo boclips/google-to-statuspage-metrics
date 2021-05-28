@@ -5,6 +5,8 @@ set -eu
 cwd="$(cd "$(dirname "$0")" && pwd)"
 
 metric_google="$("$cwd/query" "$GOOGLE_PROJECT_ID" "$CHECK_ID")"
+echo "Received response from google"
+echo "$metric_google"
 timestamp_google="$(jq --raw-output .timeSeries[0].points[0].interval.endTime <<< "$metric_google")"
 
 echo "Formatting timestamp for statuspage"
